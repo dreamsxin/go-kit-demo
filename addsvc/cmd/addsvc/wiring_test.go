@@ -16,9 +16,9 @@ import (
 
 func TestHTTP(t *testing.T) {
 	logger := log.NewNopLogger()
-	svc := addservice.New(&logger)
-	eps := addendpoint.New(svc, &logger)
-	mux := addtransport.NewHTTPHandler(eps, &logger)
+	svc := addservice.New(logger)
+	eps := addendpoint.New(svc, logger)
+	mux := addtransport.NewHTTPHandler(eps, logger)
 	srv := httptest.NewServer(mux)
 	defer srv.Close()
 

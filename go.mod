@@ -6,7 +6,7 @@ require (
 	github.com/Songmu/prompter v0.5.1
 	github.com/alioygur/godash v0.0.0-20160919141744-af6b3da41c5a
 	github.com/dave/jennifer v1.7.0
-	github.com/dreamsxin/go-kit v1.0.0
+	github.com/dreamsxin/go-kit v1.0.1
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.1
 	github.com/hashicorp/consul/api v1.27.0

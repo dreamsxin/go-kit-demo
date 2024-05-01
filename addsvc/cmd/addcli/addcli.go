@@ -11,6 +11,7 @@ import (
 
 	"github.com/dreamsxin/go-kit/log"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"go-kit-demo/addsvc/pkg/addservice"
 	"go-kit-demo/addsvc/pkg/addtransport"
@@ -39,15 +40,16 @@ func main() {
 		err error
 	)
 	if *httpAddr != "" {
-		svc, err = addtransport.NewHTTPClient(*httpAddr, &logger)
+		svc, err = addtransport.NewHTTPClient(*httpAddr, logger)
 	} else if *grpcAddr != "" {
-		conn, err := grpc.Dial(*grpcAddr, grpc.WithInsecure(), grpc.WithTimeout(time.Second))
+		ctx, _ := context.WithTimeout(context.Background(), time.Second)
+		conn, err := grpc.DialContext(ctx, *grpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error: %v", err)
 			os.Exit(1)
 		}
 		defer conn.Close()
-		svc = addtransport.NewGRPCClient(conn, &logger)
+		svc = addtransport.NewGRPCClient(conn, logger)
 	} else {
 		fmt.Fprintf(os.Stderr, "error: no remote address specified\n")
 		os.Exit(1)

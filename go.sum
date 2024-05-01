@@ -34,8 +34,8 @@ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/dreamsxin/go-kit v1.0.0 h1:uA2YlouAnGwIF0h2VHnpm3UqhmRRBAxpmTF16FYZ1ao=
-github.com/dreamsxin/go-kit v1.0.0/go.mod h1:vlZO/DUj4nt0oogS21w8ahWKImk1WKMsbV5OpYKoWXM=
+github.com/dreamsxin/go-kit v1.0.1 h1:BSWmayhd9jOZV+LDIstUFjzEXV+KfcM1svG2l/gN/4U=
+github.com/dreamsxin/go-kit v1.0.1/go.mod h1:vlZO/DUj4nt0oogS21w8ahWKImk1WKMsbV5OpYKoWXM=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=

@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"text/tabwriter"
 
 	"github.com/oklog/oklog/pkg/group"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
 	"github.com/dreamsxin/go-kit/log"
@@ -20,6 +23,10 @@ import (
 	"go-kit-demo/addsvc/pkg/addendpoint"
 	"go-kit-demo/addsvc/pkg/addservice"
 	"go-kit-demo/addsvc/pkg/addtransport"
+
+	"github.com/dreamsxin/go-kit/sd/consul"
+
+	"github.com/hashicorp/consul/api"
 )
 
 func main() {
@@ -28,13 +35,35 @@ func main() {
 	// on, but we do it here for demonstration purposes.
 	fs := flag.NewFlagSet("addsvc", flag.ExitOnError)
 	var (
-		httpAddr = fs.String("http-addr", ":8081", "HTTP listen address")
-		grpcAddr = fs.String("grpc-addr", ":8082", "gRPC listen address")
+		httpAddr   = fs.String("http-addr", ":8081", "HTTP listen address")
+		grpcAddr   = fs.String("grpc-addr", ":8082", "gRPC listen address")
+		consulAddr = flag.String("consul.addr", "", "Consul agent address")
 	)
 	fs.Usage = usageFor(fs, os.Args[0]+" [flags]")
 	fs.Parse(os.Args[1:])
 
 	logger := log.NewNopLogger()
+
+	var client consul.Client
+	{
+		consulConfig := api.DefaultConfig()
+		if len(*consulAddr) > 0 {
+			consulConfig.Address = *consulAddr
+		}
+		consulClient, err := api.NewClient(consulConfig)
+		if err != nil {
+			logger.Error("err", zap.Error(err))
+			os.Exit(1)
+		}
+		client = consul.NewClient(consulClient)
+	}
+
+	// 注册服务
+	serverURL, _ := url.Parse(*grpcAddr)
+	port, _ := strconv.Atoi(serverURL.Port())
+	registrar := consul.NewRegistrar(client, logger, "addsvc", serverURL.Host, port)
+	registrar.Register()
+	defer registrar.Deregister()
 
 	// Build the layers of the service "onion" from the inside out. First, the
 	// business logic service; then, the set of endpoints that wrap the service;
@@ -43,10 +72,10 @@ func main() {
 	// the interfaces that the transports expect. Note that we're not binding
 	// them to ports or anything yet; we'll do that next.
 	var (
-		service     = addservice.New(&logger)
-		endpoints   = addendpoint.New(service, &logger)
-		httpHandler = addtransport.NewHTTPHandler(endpoints, &logger)
-		grpcServer  = addtransport.NewGRPCServer(endpoints, &logger)
+		service     = addservice.New(logger)
+		endpoints   = addendpoint.New(service, logger)
+		httpHandler = addtransport.NewHTTPHandler(endpoints, logger)
+		grpcServer  = addtransport.NewGRPCServer(endpoints, logger)
 	)
 
 	var g group.Group
